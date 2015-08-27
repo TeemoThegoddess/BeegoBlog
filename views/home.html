@@ -1,0 +1,28 @@
+{{template "header.tpl"}}
+	<title>Homepage-My Blog</title>
+</head>
+<body>
+{{template "navbar.tpl" .}}
+
+<div class="container">
+<div class="col-md-9">
+{{range .topics}}
+	<div class="page-header">
+		<h1><a href="/topic/view/{{.Id}}">{{.Title}}</a></h1>
+		<small class="text-muted">Published at {{dateformat .Created "2006-01-02 15:04:05"}} and Updated at {{dateformat .Updated "2006-01-02 15:04:05"}},{{.Views}} browsed and {{.ReplyCount}} coments totally</small>
+		<p class="h4">		
+			{{substr .Content 0 30}}
+			...
+		</p>
+	</div>
+{{end}}
+</div>
+<div class="col-md-2">
+</div>
+<div class="col-md-1">
+	<h3>Categories</h3>
+</div>
+</div>
+</body>
+{{template "footer.tpl"}}
+</html>

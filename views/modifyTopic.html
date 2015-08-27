@@ -1,0 +1,36 @@
+{{template "header.tpl"}}
+	<title>Modify-{{.Topic.Title}}</title>
+</head>
+<body>
+	{{template "navbar.tpl" .}}
+
+	<div class="container">
+		<div class="page-header">
+			<h1>ModifyTopic</h1>
+		</div>
+	<form method="post" action="/topic">
+	<input type="hidden" name="topicId" value="{{.Tid}}"> 
+	<div class="form-group">
+		<label>TopicName</label>
+		<input type="text" name="topicName" placeholder="{{.Topic.Title}}" class="form-control">
+	</div>
+	<div class="form-group">
+		<label>CategoryName</label>
+		<select class="form-control" name="category">
+		  {{range .Categories}}
+		  	<option>{{.Title}}</option>
+		  {{end}}
+		</select>
+	</div>
+	<div class="form-group">
+		<label>TopicContent</label>
+		<textarea class="form-control" name="topicContent" placeholder="{{.Topic.Content}}" rows="10"></textarea>
+	</div>
+	  <button type="submit" class="btn btn-default">Modify</button>
+	</form>	
+	</div>
+</div>
+</body>
+{{template "footer.tpl"}}
+<script src="/static/js/tools.js"></script>
+</html>

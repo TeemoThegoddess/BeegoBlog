@@ -1,0 +1,58 @@
+{{template "header.tpl"}}
+	<title>{{.Topic.Title}}-My Blog</title>
+</head>
+<body>
+{{template "navbar.tpl" .}}
+
+<div class="container">
+	<div class="page-header">
+		<h1>
+			{{.Topic.Title}}
+		</h1>
+
+		<p class="h4">
+			{{.Topic.Content}}
+		</p>
+	</div>
+</div>
+
+<div class="container">
+<div class="page-header">
+<h3>Comments</h3>
+	{{$isLogin := .isLogin}}
+	{{$tid := .Topic.Id}}
+	{{range .Comments}}
+		<h3 style="color:red">{{.Nickname}}&nbsp;&nbsp;<small>{{dateformat .Created "2006-01-02 15:04:05"}}</small>
+		{{if $isLogin}}
+		&nbsp;&nbsp;
+		<small>
+		<a href="/reply/delete/{{$tid}}/{{.Id}}">Delete</a>
+		</small>
+		{{end}}
+		</h3>
+		<p class="h4">
+			{{.Content}}
+		</p>
+	{{end}}
+</div>
+</div>
+
+<div class="container">
+<h3>New Comment</h3>
+	<form method="post" action="/reply/add">
+		<input type="hidden" name="topicId" value="{{.Topic.Id}}">
+		<div class="form-group">
+			<label>Nickname</label>
+			<input text="text" name="nickname" placeholder="Please enter your nickname" class="form-control"></input>
+		</div>
+		<div class="form-group">
+			<label>Comment</label>
+			<textarea name="content" placeholder="Your comment" class="form-control" rows="10"></textarea>
+			</input>
+		</div>
+		<button type="submit" class="btn btn-default">Submit</button>
+	</form>
+</div>
+</body>
+{{template "footer.tpl"}}
+</html>

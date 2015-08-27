@@ -1,0 +1,35 @@
+{{template "header.tpl"}}
+	<title>AddTopic</title>
+</head>
+<body>
+	{{template "navbar.tpl" .}}
+
+	<div class="container">
+		<div class="page-header">
+			<h1>AddTopic</h1>
+		</div>
+	<form method="post" action="/topic">
+	<div class="form-group">
+		<label>TopicName</label>
+		<input type="text" name="topicName" placeholder="Please enter your topic name" class="form-control">
+	</div>
+	<div class="form-group">
+		<label>CategoryName</label>
+		<select class="form-control" name="category" id="category">
+		  {{range .Categories}}
+		  	<option >{{.Title}}</option>
+		  {{end}}
+		</select>
+	</div>
+	<div class="form-group">
+		<label>TopicContent</label>
+		<textarea class="form-control" name="topicContent" placeholder="Please enter your topic content" rows="10"></textarea>
+	</div>
+	  <button type="submit" class="btn btn-default" onclick="return checkCategories()">Add Topic</button>
+	</form>	
+	</div>
+</div>
+</body>
+{{template "footer.tpl"}}
+<script src="/static/js/tools.js"></script>
+</html>
