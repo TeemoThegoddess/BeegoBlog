@@ -1,9 +1,9 @@
 package controllers
 
-func GetStrLength(content string) string {
+func GetStrLength(content string) bool {
 	if len(content) < 30 {
-		return "false"
+		return false
 	} else {
-		return "true"
+		return true
 	}
 }
