@@ -21,6 +21,7 @@ type Topic struct {
 	Id              int64
 	Uid             int64
 	Title           string
+	ShortForContent string
 	Content         string `orm:"size(5000)"`
 	Attachment      string
 	Category        string

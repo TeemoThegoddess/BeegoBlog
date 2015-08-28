@@ -19,6 +19,8 @@ func (this *ReplyController) Add() {
 		this.Redirect("/", 302)
 		return
 	}
+
+	this.Data["Comments"], err = models.GetAllComments(tid)
 	this.Redirect("/topic/view/"+tid, 302)
 	return
 }
@@ -32,6 +34,8 @@ func (this *ReplyController) Delete() {
 		this.Redirect("/", 302)
 		return
 	}
+
+	this.Data["Comments"], err = models.GetAllComments(tid)
 	this.Redirect("/topic/view/"+tid, 302)
 	return
 }

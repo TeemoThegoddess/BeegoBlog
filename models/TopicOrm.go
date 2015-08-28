@@ -1,6 +1,7 @@
 package models
 
 import (
+	//"blog/controllers"
 	"github.com/astaxie/beego/orm"
 	"strconv"
 	"time"
@@ -8,14 +9,21 @@ import (
 
 func AddTopic(topicName string, category string, topicContent string) error {
 	o := orm.NewOrm()
+	var sfContent string
+	if len(topicContent) > 30 {
+		sfContent = topicContent[0:30] + "..."
+	} else {
+		sfContent = topicContent
+	}
 
 	topic := &Topic{
-		Title:     topicName,
-		Content:   topicContent,
-		Category:  category,
-		Created:   time.Now(),
-		Updated:   time.Now(),
-		ReplyTime: time.Now(),
+		Title:           topicName,
+		ShortForContent: sfContent,
+		Content:         topicContent,
+		Category:        category,
+		Created:         time.Now(),
+		Updated:         time.Now(),
+		ReplyTime:       time.Now(),
 	}
 
 	_, err := o.Insert(topic)
@@ -126,6 +134,11 @@ func DeleteTopic(topicId string) error {
 	})
 	if err != nil {
 		return err
+	}
+
+	err = DeleteCommentWithTopic(topicId)
+	if err != nil {
+		return nil
 	}
 
 	return err

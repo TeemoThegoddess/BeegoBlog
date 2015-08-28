@@ -28,7 +28,7 @@
 			<tr>
 				<th>{{.Id}}</th>
 				<th>{{.Title}}</th>
-				<th>{{.Created}}</th>
+				<th>{{dateformat .Created "2006-01-02 15:04:05"}}</th>
 				<th>{{.Views}}</th>
 				<th>{{.ReplyCount}}</th>
 				<th><a onclick="delConfirm('delTopic')" href="/topic/delete/{{.Id}}">Delete</a>&nbsp;&nbsp;<a href="/topic/modify/{{.Id}}">Modify</a></th>

@@ -11,8 +11,7 @@
 		<h1><a href="/topic/view/{{.Id}}">{{.Title}}</a></h1>
 		<small class="text-muted">Published at {{dateformat .Created "2006-01-02 15:04:05"}} and Updated at {{dateformat .Updated "2006-01-02 15:04:05"}},{{.Views}} browsed and {{.ReplyCount}} coments totally</small>
 		<p class="h4">	
-			{{substr .Content 0 30}}	
-			...
+			{{.ShortForContent}}
 		</p>
 	</div>
 {{end}}

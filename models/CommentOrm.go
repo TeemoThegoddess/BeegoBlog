@@ -62,3 +62,16 @@ func DeleteComment(id string) error {
 
 	return err
 }
+
+func DeleteCommentWithTopic(id string) error {
+	o := orm.NewOrm()
+
+	tid, err := strconv.ParseInt(id, 10, 64)
+	qs := o.QueryTable("comment")
+	_, err = qs.Filter("tid", tid).Delete()
+	if err != nil {
+		return err
+	}
+
+	return err
+}
