@@ -60,6 +60,29 @@ func QueryTopics(isDesc bool) ([]*Topic, error) {
 		_, err = qs.All(&topics)
 	}
 
+	if err != nil {
+		return nil, err
+	}
+
+	return topics, err
+}
+
+func QueryTopicsByCategory(isDesc bool, category string) ([]*Topic, error) {
+	o := orm.NewOrm()
+	var err error
+
+	topics := make([]*Topic, 0)
+	qs := o.QueryTable("topic")
+	if isDesc {
+		_, err = qs.Filter("category", category).OrderBy("-updated").All(&topics)
+	} else {
+		_, err = qs.Filter("category", category).All(&topics)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
 	return topics, err
 }
 

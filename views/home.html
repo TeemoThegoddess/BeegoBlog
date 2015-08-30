@@ -19,7 +19,21 @@
 <div class="col-md-2">
 </div>
 <div class="col-md-1">
-	<h3>Categories</h3>
+<div class="page-header">
+	<h2>Categories</h2>
+	{{range .categories}}
+	<p class="h4">
+	{{if eq .TopicCount 0}}
+		{{.Title}}	
+	{{else}}
+		<a href="/?category={{.Title}}">{{.Title}}</a>
+	{{end}}
+	</p>
+	{{end}}
+	<p class = "h4">
+		<a href="/">ShowAllTopics</a>
+	</p>
+</div>
 </div>
 </div>
 </body>

@@ -33,7 +33,7 @@ function delConfirm(operation){
 	switch(operation)
 	{
 		case "delTopic":
-			if(!confirm("Are you sure to delete this topic?")){
+			if(!confirm("Are you sure to delete this topic(This operation will delete all commonts too)?")){
 				window.event.returnValue = false;
 			}
 			break;

@@ -14,8 +14,17 @@ func (this *MainController) Get() {
 	this.Data["isHome"] = true
 	this.Data["isLogin"] = checkCookie(this.Ctx)
 	this.TplNames = "home.html"
-	this.Data["topics"], err = models.QueryTopics(true)
+	category := this.Input().Get("category")
+	if len(category) == 0 {
+		this.Data["topics"], err = models.QueryTopics(true)
+	} else {
+		this.Data["topics"], err = models.QueryTopicsByCategory(true, category)
+	}
+
+	this.Data["categories"], err = models.QueryCategories(false)
 	if err != nil {
 		beego.Error(err)
+		this.Redirect("/", 302)
+		return
 	}
 }
