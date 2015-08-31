@@ -56,12 +56,35 @@ func GetAllComments(tid string) ([]*Comment, error) {
 
 func DeleteComment(id, tid string) error {
 	o := orm.NewOrm()
+	topic := new(Topic)
+	var maps []orm.Params
+	var num int64
 
 	idNum, err := strconv.ParseInt(id, 10, 64)
+	tidNum, _ := strconv.ParseInt(tid, 10, 64)
 	qs := o.QueryTable("comment")
 	_, err = qs.Filter("id", idNum).Delete()
 	if err != nil {
 		return err
+	}
+	qs = o.QueryTable("topic")
+	err = qs.Filter("id", tidNum).One(topic)
+	if err != nil {
+		return err
+	}
+	if (topic.ReplyCount - 1) == 0 {
+		_, err = qs.Filter("id", tidNum).Update(orm.Params{
+			"ReplyLastUserId": 0,
+			"ReplyTime":       topic.Created,
+		})
+	} else {
+		num, err = o.Raw("SELECT created,id FROM comment WHERE created=(SELECT max(created) FROM comment)").Values(&maps)
+		if err == nil && num > 0 {
+			_, err = qs.Filter("id", tidNum).Update(orm.Params{
+				"ReplyLastUserId": maps[0]["id"],
+				"ReplyTime":       maps[0]["created"],
+			})
+		}
 	}
 	return err
 }
