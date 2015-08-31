@@ -29,7 +29,7 @@ func (this *ReplyController) Delete() {
 	tid := this.Ctx.Input.Param("0")
 	id := this.Ctx.Input.Param("1")
 
-	err := models.DeleteComment(id)
+	err := models.DeleteComment(id, tid)
 	if err != nil {
 		this.Redirect("/", 302)
 		return

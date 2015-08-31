@@ -27,7 +27,11 @@ func AddComment(tid, nickname, content string) error {
 	qs := o.QueryTable("topic")
 	_, err = qs.Filter("id", tidNum).Update(orm.Params{
 		"ReplyLastUserId": comment.Id,
+		"ReplyTime":       comment.Created,
 	})
+	if err != nil {
+		return err
+	}
 
 	return err
 }
@@ -50,7 +54,7 @@ func GetAllComments(tid string) ([]*Comment, error) {
 	return comments, err
 }
 
-func DeleteComment(id string) error {
+func DeleteComment(id, tid string) error {
 	o := orm.NewOrm()
 
 	idNum, err := strconv.ParseInt(id, 10, 64)
@@ -59,7 +63,6 @@ func DeleteComment(id string) error {
 	if err != nil {
 		return err
 	}
-
 	return err
 }
 

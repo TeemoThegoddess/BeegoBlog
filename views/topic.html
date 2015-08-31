@@ -19,6 +19,7 @@
 				<th>Title</th>
 				<th>Created</th>
 				<th>Views</th>
+				<th>LastCommentTime</th>
 				<th>ReplyCount</th>
 				<th>Operation</th>
 			</tr>
@@ -30,6 +31,11 @@
 				<th>{{.Title}}</th>
 				<th>{{dateformat .Created "2006-01-02 15:04:05"}}</th>
 				<th>{{.Views}}</th>
+				{{if eq .ReplyCount 0}}
+				<th>No Comment</th>
+				{{else}}
+				<th>{{dateformat .ReplyTime "2006-01-02 15:04:05"}}</th>
+				{{end}}
 				<th>{{.ReplyCount}}</th>
 				<th><a onclick="delConfirm('delTopic')" href="/topic/delete/{{.Id}}">Delete</a>&nbsp;&nbsp;<a href="/topic/modify/{{.Id}}">Modify</a></th>
 			</tr>
