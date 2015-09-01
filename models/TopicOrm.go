@@ -10,6 +10,8 @@ import (
 func AddTopic(topicName string, category string, topicContent string) error {
 	o := orm.NewOrm()
 	var sfContent string
+	var topicCount []*Topic
+
 	if len(topicContent) > 30 {
 		sfContent = topicContent[0:30] + "..."
 	} else {
@@ -31,6 +33,10 @@ func AddTopic(topicName string, category string, topicContent string) error {
 		return err
 	}
 
+	topicCount, err = QueryTopicsByCategory(false, category)
+	if err != nil {
+		return err
+	}
 	category1 := new(Category)
 	qs := o.QueryTable("category")
 	err = qs.Filter("title", category).One(category1)
@@ -38,7 +44,7 @@ func AddTopic(topicName string, category string, topicContent string) error {
 		return err
 	}
 	_, err = qs.Filter("title", category).Update(orm.Params{
-		"TopicCount":      category1.TopicCount + 1,
+		"TopicCount":      int64(len(topicCount)),
 		"TopicLastUserId": topic.Id,
 	})
 	if err != nil {
@@ -109,12 +115,23 @@ func QueryTopic(topicId string, isModify bool) (*Topic, error) {
 }
 
 func ModifyTopic(topicId, title, category, content string) error {
+	topic := new(Topic)
+	category1 := new(Category)
+	category2 := new(Category)
+	oldTopics := make([]*Topic, 0)
+	newTopics := make([]*Topic, 0)
+
 	tid, err := strconv.ParseInt(topicId, 10, 64)
 	if err != nil {
 		return err
 	}
 
 	o := orm.NewOrm()
+	err = o.QueryTable("topic").Filter("id", tid).One(topic)
+	if err != nil {
+		return nil
+	}
+	oldCategory := topic.Category
 	_, err = o.QueryTable("topic").Filter("id", tid).Update(orm.Params{
 		"Title":    title,
 		"Content":  content,
@@ -125,10 +142,25 @@ func ModifyTopic(topicId, title, category, content string) error {
 		return err
 	}
 
+	qs := o.QueryTable("category")
+	err = qs.Filter("title", oldCategory).One(category1)
+	if err == nil {
+		oldTopics, _ = QueryTopicsByCategory(false, oldCategory)
+		category1.TopicCount = int64(len(oldTopics))
+		o.Update(category1)
+	}
+	err = qs.Filter("title", category).One(category2)
+	if err == nil {
+		newTopics, _ = QueryTopicsByCategory(false, category)
+		category2.TopicCount = int64(len(newTopics))
+		o.Update(category2)
+	}
+
 	return err
 }
 
 func DeleteTopic(topicId string) error {
+	topicCount := make([]*Topic, 0)
 	tid, err := strconv.ParseInt(topicId, 10, 64)
 	if err != nil {
 		return err
@@ -146,6 +178,8 @@ func DeleteTopic(topicId string) error {
 		return err
 	}
 
+	topicCount, err = QueryTopicsByCategory(false, topic1.Category)
+
 	category1 := new(Category)
 	qs := o.QueryTable("category")
 	err = qs.Filter("title", topic1.Category).One(category1)
@@ -153,7 +187,7 @@ func DeleteTopic(topicId string) error {
 		return err
 	}
 	_, err = qs.Filter("title", topic1.Category).Update(orm.Params{
-		"TopicCount": category1.TopicCount - 1,
+		"TopicCount": int64(len(topicCount)),
 	})
 	if err != nil {
 		return err
