@@ -24,6 +24,7 @@ type Topic struct {
 	ShortForContent string
 	Content         string `orm:"size(5000)"`
 	Attachment      string
+	Labels          string
 	Category        string
 	Created         time.Time `orm:"index"`
 	Updated         time.Time `orm:"index"`

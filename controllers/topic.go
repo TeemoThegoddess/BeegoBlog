@@ -3,6 +3,7 @@ package controllers
 import (
 	"blog/models"
 	"github.com/astaxie/beego"
+	"strings"
 )
 
 type TopicController struct {
@@ -44,17 +45,18 @@ func (this *TopicController) Post() {
 	topicContent := this.Input().Get("topicContent")
 	topicId := this.Input().Get("topicId")
 	category := this.Input().Get("category")
+	labels := this.Input().Get("labels")
 
 	var err error
 	if len(topicId) == 0 {
 		if len(category) != 0 {
-			err = models.AddTopic(topicName, category, topicContent)
+			err = models.AddTopic(topicName, labels, category, topicContent)
 		} else {
 			this.Redirect("/category", 302)
 			return
 		}
 	} else {
-		err = models.ModifyTopic(topicId, topicName, category, topicContent)
+		err = models.ModifyTopic(topicId, topicName, labels, category, topicContent)
 	}
 
 	if err != nil {
@@ -69,17 +71,18 @@ func (this *TopicController) View() {
 	this.Data["isLogin"] = checkCookie(this.Ctx)
 	this.TplNames = "viewTopic.html"
 	tid := this.Ctx.Input.Param("0")
-	var err error
 
-	this.Data["Topic"], err = models.QueryTopic(tid, false)
+	topic, err := models.QueryTopic(tid, false)
 	if err != nil {
 		beego.Error(err)
 		this.Redirect("/", 302)
 		return
 	}
 
+	this.Data["Topic"] = topic
 	this.Data["Tid"] = this.Ctx.Input.Param("0")
 	this.Data["Comments"], err = models.GetAllComments(tid)
+	this.Data["Labels"] = strings.Split(topic.Labels, " ")
 	if err != nil {
 		beego.Error(err)
 		this.Redirect("/", 302)

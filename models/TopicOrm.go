@@ -4,10 +4,14 @@ import (
 	//"blog/controllers"
 	"github.com/astaxie/beego/orm"
 	"strconv"
+	"strings"
 	"time"
 )
 
-func AddTopic(topicName string, category string, topicContent string) error {
+func AddTopic(topicName, labels, category, topicContent string) error {
+	//operate labels
+	labels = "$" + strings.Join(strings.Split(labels, " "), "#$") + "#"
+
 	o := orm.NewOrm()
 	var sfContent string
 	var topicCount []*Topic
@@ -22,6 +26,7 @@ func AddTopic(topicName string, category string, topicContent string) error {
 		Title:           topicName,
 		ShortForContent: sfContent,
 		Content:         topicContent,
+		Labels:          labels,
 		Category:        category,
 		Created:         time.Now(),
 		Updated:         time.Now(),
@@ -111,10 +116,14 @@ func QueryTopic(topicId string, isModify bool) (*Topic, error) {
 	}
 	_, err = o.Update(topic)
 
+	topic.Labels = strings.Replace(strings.Replace(topic.Labels, "#", " ", -1), "$", "", -1)
+
 	return topic, err
 }
 
-func ModifyTopic(topicId, title, category, content string) error {
+func ModifyTopic(topicId, title, labels, category, content string) error {
+	//operate labels
+	labels = "$" + strings.Join(strings.Split(labels, " "), "#$") + "#"
 	topic := new(Topic)
 	category1 := new(Category)
 	category2 := new(Category)
@@ -135,6 +144,7 @@ func ModifyTopic(topicId, title, category, content string) error {
 	_, err = o.QueryTable("topic").Filter("id", tid).Update(orm.Params{
 		"Title":    title,
 		"Content":  content,
+		"Labels":   labels,
 		"Category": category,
 		"Updated":  time.Now(),
 	})
@@ -199,4 +209,38 @@ func DeleteTopic(topicId string) error {
 	}
 
 	return err
+}
+
+func QueryTopicsByLabel(isDesc bool, label string) ([]*Topic, error) {
+	topics := make([]*Topic, 0)
+	o := orm.NewOrm()
+	qs := o.QueryTable("topic")
+
+	_, err := qs.Filter("labels__contains", label).OrderBy("-created").All(&topics)
+	if err != nil {
+		return nil, err
+	}
+
+	return topics, err
+}
+
+func GetAllTopics(isDesc bool, label, category string) (topics []*Topic, err error) {
+	topics = make([]*Topic, 0)
+	o := orm.NewOrm()
+	qs := o.QueryTable("topic")
+
+	if len(category) > 0 {
+		qs = qs.Filter("category", category)
+	}
+	if len(label) > 0 {
+		qs = qs.Filter("labels__contains", label)
+	}
+	if isDesc {
+		_, err = qs.OrderBy("-updated").All(&topics)
+	} else {
+		_, err = qs.All(&topics)
+	}
+
+	return topics, err
+
 }

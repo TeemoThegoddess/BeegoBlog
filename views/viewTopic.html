@@ -6,13 +6,20 @@
 
 <div class="container">
 	<div class="page-header">
+	{{$labels :=  .Labels}}
+	{{with .Topic}}
 		<h1>
-			{{.Topic.Title}}
+			{{.Title}}
 		</h1>
-
+		<h5>
+			{{range $labels}}
+				<a href="/?label={{.}}">{{.}}</a>
+			{{end}}
+		</h5>
 		<p class="h4">
-			{{.Topic.Content}}
+			{{.Content}}
 		</p>
+		{{end}}
 	</div>
 </div>
 
